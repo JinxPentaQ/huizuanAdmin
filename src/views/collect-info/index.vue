@@ -82,7 +82,12 @@
           <el-tag>{{ row.status | statusFilter }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="类型" prop="type" min-width="150px" align="center">
+      <el-table-column
+        label="类型"
+        prop="type"
+        min-width="150px"
+        align="center"
+      >
         <template slot-scope="{ row }">
           <el-tag>{{ row.type | typeFilter }}</el-tag>
         </template>
@@ -127,12 +132,12 @@
         min-width="200px"
         class-name="small-padding fixed-width"
       >
-        <template slot-scope="{ row, $index }">
+        <template slot-scope="{ row }">
           <el-button
             :disabled="row.status !== 2"
             type="primary"
             size="mini"
-            @click="codePass(row)"
+            @click="codePass(row, 1)"
           >
             通过
           </el-button>
@@ -140,7 +145,7 @@
             :disabled="row.status !== 2"
             size="mini"
             type="danger"
-            @click="handleDelete(row, $index)"
+            @click="codePass(row, 0)"
           >
             拒绝
           </el-button>
@@ -175,7 +180,7 @@
 
 <script>
 import Pagination from '@/components/Pagination'
-import { getsCollectInfo } from '@/api/collect-info'
+import { getsCollectInfo, setCollectInfoStatus } from '@/api/collect-info'
 import { MessageBox } from 'element-ui'
 
 const status = [
@@ -215,7 +220,7 @@ export default {
   data() {
     return {
       tableKey: 0,
-      list: null,
+      list: [],
       total: 0,
       listLoading: true,
       listQuery: {
@@ -247,15 +252,14 @@ export default {
         this.listLoading = false
       })
     },
-    codePass() {},
-    handleDelete(row, index) {
-      MessageBox.confirm('确认删除？', '删除', {
-        confirmButtonText: '删除',
+    codePass(row, status) {
+      MessageBox.confirm('是否审核此条？', '操作', {
+        confirmButtonText: '确认',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        return new Promise((resolve, reject) => {
-          this.listLoading = true
+        setCollectInfoStatus({ id: row.id, status }).then((response) => {
+          this.getList()
         })
       })
     },
@@ -265,7 +269,6 @@ export default {
     },
     // 查看收款信息
     handleInfo(row) {
-      console.log(row, 'row')
       this.dialogVisible = true
       this.detail = row
       this.detail.pay_info = row.pay_info ? JSON.parse(row.pay_info) : {}

@@ -10,3 +10,13 @@ export function getsCollectInfo(params) {
     params
   })
 }
+/**
+ * 获取收款信息
+ */
+export function setCollectInfoStatus(params) {
+  return request({
+    url: 'Admin/User_UserController.SetCollectInfoStatus',
+    method: 'post',
+    params
+  })
+}
