@@ -142,12 +142,11 @@
             通过
           </el-button>
           <el-button
-            :disabled="row.status !== 2"
             size="mini"
             type="danger"
             @click="codePass(row, 0)"
           >
-            拒绝
+            删除
           </el-button>
         </template>
       </el-table-column>
